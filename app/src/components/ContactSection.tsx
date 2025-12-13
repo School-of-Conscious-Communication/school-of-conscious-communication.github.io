@@ -93,6 +93,8 @@ const ContactSection = () => {
             className="space-y-6"
           >
             <input type="hidden" name="form-name" value="contact" />
+            <input type="hidden" name="form-subject" value="Message Received" />
+
             <p className="hidden">
               <label>
                 Don't fill this out: <input name="bot-field" />
@@ -100,11 +102,13 @@ const ContactSection = () => {
             </p>
             
             <div>
-              <Label htmlFor="name" className="block text-sm font-medium text-muted-foreground mb-2">Name</Label>
-              <Input
+              <label htmlFor="name" className="block text-sm font-medium text-muted-foreground mb-2">
+                Name
+              </label>
+              <input
+                type="text"
                 id="name"
                 name="name"
-                placeholder="Jane Smith"
                 value={formData.name}
                 onChange={handleChange}
                 required
@@ -116,12 +120,13 @@ const ContactSection = () => {
             </div>
             
             <div>
-              <Label htmlFor="email" className="block text-sm font-medium text-muted-foreground mb-2">Email</Label>
-              <Input
+              <label htmlFor="email" className="block text-sm font-medium text-muted-foreground mb-2">
+                Email
+              </label>
+              <input
+                type="email"
                 id="email"
                 name="email"
-                type="email"
-                placeholder="jane@example.com"
                 value={formData.email}
                 onChange={handleChange}
                 required
@@ -133,11 +138,12 @@ const ContactSection = () => {
             </div>
             
             <div>
-              <Label htmlFor="message" className="block text-sm font-medium text-muted-foreground mb-2">Message</Label>
-              <Textarea
+              <label htmlFor="message" className="block text-sm font-medium text-muted-foreground mb-2">
+                Message
+              </label>
+              <textarea
                 id="message"
                 name="message"
-                placeholder="Tell us about your vision, timeline, or any questions you have..."
                 value={formData.message}
                 onChange={handleChange}
                 required

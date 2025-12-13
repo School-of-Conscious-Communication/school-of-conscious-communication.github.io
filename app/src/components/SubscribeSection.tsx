@@ -1,9 +1,68 @@
 import { useState } from 'react';
-import { Send } from 'lucide-react';
+import { Send, CheckCircle } from 'lucide-react';
 import SectionHeader from './SectionHeader';
+import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
 const SubscribeSection = () => {
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [formData, setFormData] = useState({
+    email: '',
+  });
   const [email, setEmail] = useState('');
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const form = e.currentTarget;
+      const formData = new FormData(form);
+
+      const response = await fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(formData as any).toString(),
+      });
+
+      if (response.ok || response.status === 303) {
+        // 303 is expected redirect after form submission
+        setIsSubmitted(true);
+        toast({
+          title: "Subscribed!",
+          description: "You've been added to our mailing list.",
+        });
+      } else {
+        console.error("Form submission response:", response.status);
+        throw new Error(`Failed to subscribe (${response.status})`);
+      }
+    } catch (error) {
+      console.error("Form submission error:", error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to submit form",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (isSubmitted) {
+    return (
+      <div className="text-center py-12">
+        <div className="w-16 h-16 rounded-full bg-success/10 flex items-center justify-center mx-auto mb-6">
+          <CheckCircle className="w-8 h-8 text-success" />
+        </div>
+        <h3 className="text-2xl font-display font-semibold mb-2">Thanks for subscribing!</h3>
+        <p className="text-muted-foreground">You'll receive our next update as soon as it comes out.</p>
+      </div>
+    );
+  }
 
   return (
     <section id="subscribe" className="relative py-24 md:py-32">
@@ -18,6 +77,7 @@ const SubscribeSection = () => {
         
         <div className="max-w-md mx-auto opacity-0 animate-fade-in">
           <form
+            onSubmit={handleSubmit}
             name="subscribe"
             method="POST"
             data-netlify="true"
@@ -25,6 +85,8 @@ const SubscribeSection = () => {
             className="relative"
           >
             <input type="hidden" name="form-name" value="subscribe" />
+            <input type="hidden" name="form-subject" value="Subscribed" />
+
             <p className="hidden">
               <label>
                 Don't fill this out: <input name="bot-field" />
