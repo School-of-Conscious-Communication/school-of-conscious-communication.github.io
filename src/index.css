@@ -1,0 +1,164 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap');
+
+@layer base {
+  :root {
+    /* Deep Mystical Base */
+    --background: 240 30% 8%;
+    --foreground: 240 20% 95%;
+    
+    /* Mystical Surface Colors */
+    --card: 240 25% 12%;
+    --card-foreground: 240 20% 95%;
+    --popover: 240 25% 12%;
+    --popover-foreground: 240 20% 95%;
+    
+    /* Primary - Violet */
+    --primary: 270 70% 60%;
+    --primary-foreground: 0 0% 100%;
+    
+    /* Secondary - Indigo */
+    --secondary: 240 60% 55%;
+    --secondary-foreground: 0 0% 100%;
+    
+    /* Muted */
+    --muted: 240 20% 18%;
+    --muted-foreground: 240 15% 65%;
+    
+    /* Accent - Teal */
+    --accent: 175 60% 45%;
+    --accent-foreground: 0 0% 100%;
+    
+    /* Rainbow Spectrum Colors */
+    --violet: 270 70% 60%;
+    --indigo: 240 60% 55%;
+    --teal: 175 60% 45%;
+    --gold: 42 85% 55%;
+    --rose: 340 65% 60%;
+    
+    /* Gradient variations */
+    --violet-glow: 270 70% 70%;
+    --indigo-glow: 240 60% 65%;
+    --teal-glow: 175 60% 55%;
+    --gold-glow: 42 85% 65%;
+    --rose-glow: 340 65% 70%;
+    
+    /* UI Colors */
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 20% 20%;
+    --input: 240 20% 20%;
+    --ring: 270 70% 60%;
+    --radius: 0.75rem;
+    
+    /* Sidebar */
+    --sidebar-background: 240 30% 8%;
+    --sidebar-foreground: 240 20% 95%;
+    --sidebar-primary: 270 70% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 25% 15%;
+    --sidebar-accent-foreground: 240 20% 95%;
+    --sidebar-border: 240 20% 20%;
+    --sidebar-ring: 270 70% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Cormorant Garamond', serif;
+  }
+}
+
+@layer components {
+  .gradient-text {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--violet)), hsl(var(--indigo)), hsl(var(--teal)));
+  }
+  
+  .gradient-border {
+    position: relative;
+  }
+  
+  .gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: linear-gradient(135deg, hsl(var(--violet)), hsl(var(--indigo)), hsl(var(--teal)));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+  
+  .glow-violet {
+    box-shadow: 0 0 40px -10px hsl(var(--violet) / 0.5);
+  }
+  
+  .glow-indigo {
+    box-shadow: 0 0 40px -10px hsl(var(--indigo) / 0.5);
+  }
+  
+  .glow-teal {
+    box-shadow: 0 0 40px -10px hsl(var(--teal) / 0.5);
+  }
+  
+  .glow-gold {
+    box-shadow: 0 0 40px -10px hsl(var(--gold) / 0.5);
+  }
+  
+  .glow-rose {
+    box-shadow: 0 0 40px -10px hsl(var(--rose) / 0.5);
+  }
+}
+
+@layer utilities {
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  .animate-float-delayed {
+    animation: float 6s ease-in-out infinite;
+    animation-delay: 2s;
+  }
+  
+  .animate-float-slow {
+    animation: float 8s ease-in-out infinite;
+    animation-delay: 4s;
+  }
+  
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-20px) rotate(3deg);
+    }
+  }
+  
+  .animate-pulse-glow {
+    animation: pulse-glow 4s ease-in-out infinite;
+  }
+  
+  @keyframes pulse-glow {
+    0%, 100% {
+      opacity: 0.3;
+    }
+    50% {
+      opacity: 0.6;
+    }
+  }
+}
