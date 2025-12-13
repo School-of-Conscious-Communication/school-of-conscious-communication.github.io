@@ -1,8 +1,16 @@
 import { useState } from 'react';
-import { Send } from 'lucide-react';
+import { Send, CheckCircle } from 'lucide-react';
 import SectionHeader from './SectionHeader';
+import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
 const ContactSection = () => {
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -12,6 +20,56 @@ const ContactSection = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const form = e.currentTarget;
+      const formData = new FormData(form);
+
+      // Submit to Netlify function endpoint
+      const response = await fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(formData as any).toString(),
+      });
+
+      if (response.ok || response.status === 303) {
+        // 303 is expected redirect after form submission
+        setIsSubmitted(true);
+        toast({
+          title: "Message sent!",
+          description: "I'll get back to you within 24 hours.",
+        });
+      } else {
+        console.error("Form submission response:", response.status);
+        throw new Error(`Failed to submit form (${response.status})`);
+      }
+    } catch (error) {
+      console.error("Form submission error:", error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to submit form",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (isSubmitted) {
+    return (
+      <div className="text-center py-12">
+        <div className="w-16 h-16 rounded-full bg-success/10 flex items-center justify-center mx-auto mb-6">
+          <CheckCircle className="w-8 h-8 text-success" />
+        </div>
+        <h3 className="text-2xl font-display font-semibold mb-2">Thanks for reaching out!</h3>
+        <p className="text-muted-foreground">We'll be in touch soon.</p>
+      </div>
+    );
+  }
 
   return (
     <section id="contact" className="relative py-24 md:py-32 overflow-hidden">
@@ -27,6 +85,7 @@ const ContactSection = () => {
         
         <div className="max-w-lg mx-auto opacity-0 animate-fade-in">
           <form
+            onSubmit={handleSubmit}
             name="contact"
             method="POST"
             data-netlify="true"
@@ -41,13 +100,11 @@ const ContactSection = () => {
             </p>
             
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-muted-foreground mb-2">
-                Name
-              </label>
-              <input
-                type="text"
+              <Label htmlFor="name" className="block text-sm font-medium text-muted-foreground mb-2">Name</Label>
+              <Input
                 id="name"
                 name="name"
+                placeholder="Jane Smith"
                 value={formData.name}
                 onChange={handleChange}
                 required
@@ -59,13 +116,12 @@ const ContactSection = () => {
             </div>
             
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-muted-foreground mb-2">
-                Email
-              </label>
-              <input
-                type="email"
+              <Label htmlFor="email" className="block text-sm font-medium text-muted-foreground mb-2">Email</Label>
+              <Input
                 id="email"
                 name="email"
+                type="email"
+                placeholder="jane@example.com"
                 value={formData.email}
                 onChange={handleChange}
                 required
@@ -77,12 +133,11 @@ const ContactSection = () => {
             </div>
             
             <div>
-              <label htmlFor="message" className="block text-sm font-medium text-muted-foreground mb-2">
-                Message
-              </label>
-              <textarea
+              <Label htmlFor="message" className="block text-sm font-medium text-muted-foreground mb-2">Message</Label>
+              <Textarea
                 id="message"
                 name="message"
+                placeholder="Tell us about your vision, timeline, or any questions you have..."
                 value={formData.message}
                 onChange={handleChange}
                 required
@@ -93,17 +148,20 @@ const ContactSection = () => {
                   transition-all duration-300"
               />
             </div>
-            
-            <button
-              type="submit"
-              className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-xl
+            <Button type="submit" variant="default" size="lg" className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-xl
                 bg-gradient-to-r from-rose to-rose-glow text-background font-medium
                 hover:shadow-lg hover:shadow-rose/25 transition-all duration-300
-                focus:outline-none focus:ring-2 focus:ring-rose/50"
-            >
-              <Send className="w-4 h-4" />
-              Send Message
-            </button>
+                focus:outline-none focus:ring-2 focus:ring-rose/50" disabled={isSubmitting}>
+              {isSubmitting ? (
+                "Sending..."
+              ) : (
+                <>
+                  <Send className="w-4 h-4" />
+                  Send Message
+                </>
+              )}
+            </Button>
+
           </form>
         </div>
       </div>
